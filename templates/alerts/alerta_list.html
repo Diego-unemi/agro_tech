@@ -1,0 +1,176 @@
+{% extends "base/base.html" %}
+{% block title %}Alertas | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'umbral_list' %}">umbrales</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'alerta_list' %}">alerta</a>{% endblock  %}
+{% block a6info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_profile' %}">perfil</a>{% endblock %}
+{% if user.is_admin or user.is_agronomo %}
+    {% block a7info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_list' %}">Usuarios</a>{% endblock %}
+{% endif %}
+
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+{% block content %}
+{% load static %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 px-6 md:px-10 py-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                    <h1 class="text-3xl md:text-4xl font-black tracking-tighter">Historial de Alertas</h1>
+                    <a href="{% url 'umbral_list' %}" class="flex items-center gap-2 rounded-lg h-10 px-6  text-gray-700 text-sm font-bold hover:border border-gray-300 transition-colors text-text-dark/80 dark:text-text-light/80   ">
+                        <span class="material-symbols-outlined text-sm">settings</span>
+                        Configurar Umbrales
+                    </a>
+                </div>
+
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Filtros -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm mb-6">
+                    <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Zona</label>
+                            <select name="zona" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                    border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 h-14 placeholder:text-zinc-400 dark:placeholder-zinc-500 p-3.5 text-base font-normal">
+                                <option value="">Todas las zonas</option>
+                                {% for zona in zonas %}
+                                <option value="{{ zona.id }}" {% if zona_filter == zona.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ zona.nombre }} - {{ zona.finca.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Estado</label>
+                            <select name="estado" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                    border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 h-14 placeholder:text-zinc-400 dark:placeholder-zinc-500 p-3.5 text-base font-normal">
+                                <option value="">Todos</option>
+                                {% for value, label in estado_choices %}
+                                <option value="{{ value }}" {% if estado_filter == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full min-w-0 flex-1 resize-none overflow-hidden text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                     border-zinc-300 dark:border-zinc-700  bg-primary text-white rounded-lg  hover:bg-green-600 transition-colors p-3.5 text-base font-normal">
+                                Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de alertas -->
+                <div class="space-y-4">
+                    {% for alerta in page_obj %}
+                    <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border-l-4 
+                        {% if alerta.nivel_severidad == 'CRITICO' %}border-red
+                        {% elif alerta.nivel_severidad == 'ALTO' %}border-orange
+                        {% elif alerta.nivel_severidad == 'MEDIO' %}border-yellow-500
+                        {% else %}border-green-500{% endif %}
+                        shadow-sm">
+                        <div class="flex flex-wrap justify-between items-start gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="material-symbols-outlined text-2xl
+                                        {% if alerta.nivel_severidad == 'CRITICO' %}text-red
+                                        {% elif alerta.nivel_severidad == 'ALTO' %}text-orange
+                                        {% elif alerta.nivel_severidad == 'MEDIO' %}text-yellow-500
+                                        {% else %}text-green-500{% endif %}">
+                                        {% if alerta.tipo_alerta == 'EXCESO' %}trending_up{% else %}trending_down{% endif %}
+                                    </span>
+                                    <div>
+                                        <h3 class="text-lg font-bold">
+                                            {{ alerta.parametro }} {{ alerta.get_tipo_alerta_display }} en {{ alerta.zona.nombre }}
+                                        </h3>
+                                        <p class="text-sm text-gray-500">{{ alerta.zona.finca.nombre }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                                    <div>
+                                        <p class="text-xs text-gray-500">Valor Detectado</p>
+                                        <p class="font-semibold">{{ alerta.lectura_valor }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Severidad</p>
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                            {% if alerta.nivel_severidad == 'CRITICO' %}bg-red-100 text-red-800
+                                            {% elif alerta.nivel_severidad == 'ALTO' %}bg-orange-100 text-orange-800
+                                            {% elif alerta.nivel_severidad == 'MEDIO' %}bg-yellow-100 text-yellow-800
+                                            {% else %}bg-green-100 text-green-800{% endif %}">
+                                            {{ alerta.nivel_severidad }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Estado</p>
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                            {% if alerta.estado == 'NUEVA' %}bg-red-100 text-red-800
+                                            {% elif alerta.estado == 'LEIDA' %}bg-blue-100 text-blue-800
+                                            {% elif alerta.estado == 'RESUELTA' %}bg-green-100 text-green-800
+                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                            {{ alerta.get_estado_display }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Fecha</p>
+                                        <p class="text-sm">{{ alerta.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                                    </div>
+                                </div>
+
+                                {% if alerta.mensaje %}
+                                <p class="text-sm text-gray-700 dark:text-gray-300">{{ alerta.mensaje }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                {% if alerta.estado != 'RESUELTA' %}
+                                <a href="{% url 'alerta_resolver' alerta.id %}" 
+                                   class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors text-center">
+                                    Resolver
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-12 bg-card-light dark:bg-card-dark rounded-xl">
+                        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">notifications_off</span>
+                        <p class="text-xl text-gray-500">No hay alertas registradas</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginación -->
+                {% if page_obj.has_other_pages %}
+                <div class="mt-8 flex items-center justify-center gap-2">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if zona_filter %}&zona={{ zona_filter }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}" 
+                       class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Anterior</a>
+                    {% endif %}
+                    
+                    <span class="px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                    
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if zona_filter %}&zona={{ zona_filter }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}" 
+                       class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Siguiente</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}
+

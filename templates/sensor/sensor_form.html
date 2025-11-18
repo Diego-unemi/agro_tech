@@ -1,0 +1,146 @@
+{% extends "base/base.html" %}
+{% block title %}{{ title }} | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'umbral_list' %}">umbrales</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'alerta_list' %}">alerta</a>{% endblock  %}
+{% block a6info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_profile' %}">perfil</a>{% endblock %}
+{% block a7info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_list' %}">Usuarios</a>{% endblock %}
+
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+{% block content %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 px-6 md:px-10 py-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <a href="{% url 'sensor_list' %}" class="text-primary hover:text-green-600 flex items-center gap-2 text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Volver a Sensores
+                    </a>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-8 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                    <h1 class="text-2xl font-bold mb-6">{{ title }}</h1>
+
+                    {% if messages %}
+                    <div class="mb-6">
+                        {% for message in messages %}
+                        <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Nombre del Sensor *</label>
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.nombre.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Código Serial *</label>
+                                {{ form.codigo_serial }}
+                                {% if form.codigo_serial.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.codigo_serial.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Tipo de Sensor *</label>
+                                {{ form.tipo }}
+                                {% if form.tipo.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.tipo.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Estado *</label>
+                                {{ form.estado }}
+                                {% if form.estado.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.estado.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Finca</label>
+                                {{ form.finca }}
+                                {% if form.finca.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.finca.errors.0 }}</p>
+                                {% endif %}
+                                <p class="mt-1 text-xs text-gray-500">Selecciona una finca para ver sus zonas</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Zona Asignada</label>
+                                {{ form.zona }}
+                                {% if form.zona.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.zona.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Fabricante</label>
+                                {{ form.fabricante }}
+                                {% if form.fabricante.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.fabricante.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Modelo</label>
+                                {{ form.modelo }}
+                                {% if form.modelo.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.modelo.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Fecha de Instalación</label>
+                                {{ form.fecha_instalacion }}
+                                {% if form.fecha_instalacion.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.fecha_instalacion.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Descripción</label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.descripcion.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex gap-4 pt-4">
+                            <button type="submit" class="flex-1 h-12 px-6 bg-primary text-white rounded-lg font-bold hover:bg-green-600 transition-colors">
+                                {{ button_text }}
+                            </button>
+                            <a href="{% url 'sensor_list' %}" class="flex-1 h-12 px-6 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors flex items-center justify-center">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}
+

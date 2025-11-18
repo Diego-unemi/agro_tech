@@ -1,0 +1,391 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title> {% block title %}AgroTech - Monitoreo y Control Ambiental de Cultivos{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="{% static 'dist/styles.css' %}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+		// Aplicar el tema tan pronto como sea posible
+		(function() {
+			const isDarkModeEnabled = localStorage.getItem('darkModeEnabled') === 'False';
+			if (isDarkModeEnabled) {
+				document.documentElement.classList.add('dark');
+			}
+			document.documentElement.classList.add('loaded');
+		})();
+		(function() {
+			const savedTheme = localStorage.getItem('theme') || 'light';
+			document.documentElement.className = savedTheme;
+			document.documentElement.classList.add('loaded');
+		  })();
+	</script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4CAF50",
+                        "background-light": "#F4F6F8",
+                        "background-dark": "#152111",
+                        "text-dark": "#212121",
+                        "text-light": "#F4F6F8",
+                        "primary-green": "#4CAF50",
+                        "secondary-gray-light": "#F5F5F5",
+                        "secondary-gray-medium": "#BDBDBD",
+                        "accent": "#2196F3",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#2C2C2C",
+                        "border-light": "#E0E0E0",
+                        "border-dark": "#424242",
+                        "blue": "#2196F3",
+                        "orange": "#FF9800",
+                        "red": "#F44336",
+                        "accent-orange": "#FF9800",
+                        "accent-red": "#F44336",
+                        "error": "#F44336",
+                        "warning": "#FFC107"
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-dark dark:text-text-light " >
+    <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-4 md:px-10 py-3 shadow-sm">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <!-- Logo & Title -->
+                <div class="flex items-center gap-4 text-primary">
+                    <div class="size-6">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
+                        </svg>
+                    </div>
+                    <a href="{% url 'base' %}" class="text-xl font-bold leading-tight tracking-[-0.015em]">AgroTech</a>
+                </div>
+                <!-- Navigation -->
+                <div class="flex flex-grow items-center justify-center">
+                <nav class="hidden md:flex items-center gap-10 flex-grow justify-center " >
+                    {% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#benefits">Beneficios</a>{% endblock %}
+                    {% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#how-it-works">Cómo Funciona</a>{% endblock %}
+                    {% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#testimonials">Testimonios</a>{% endblock %}
+                    {% block a4info %}{% endblock %}
+                    {% block a5info %}{% endblock %}
+                    {% block a6info %}{% endblock %}
+                    {% block a7info %}{% endblock %}
+                </nav>
+                </div>
+                
+                
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-2">
+                    <span id="themeIconContainer" class="dark:bg-gray inline-block p-2 rounded  cursor-pointer">
+                        <i id="themeIcon" class="fas fa-moon text-gray-300 dark:text-gray-500"></i>
+                    </span>
+                    {% block buttons %}<a href="{% url 'login' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-transparent border border-primary text-primary text-sm font-bold hover:bg-primary/10 transition-colors truncate">Iniciar Sesión</a>
+                    <a href="{% url 'registro' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Registrarse</a> {% endblock %}
+                </div>
+            </div>
+        </header>
+
+        {% block content %}
+        <main class="flex-grow">
+            <!-- Hero Section -->
+            <section class="relative">
+                <div class="absolute inset-0 bg-cover bg-center bg-no-repeat">
+                    <video src="{% static 'img/farm_greenhouse.mp4' %}" autoplay loop muted class="w-full h-full object-cover"></video>
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center text-center py-16 md:py-24">
+                        <h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-tighter ">
+                            Agricultura Inteligente, Cosechas Excepcionales
+                        </h1>
+                        <p class="mt-4 max-w-3xl text-white/90 text-base md:text-xl font-normal leading-normal">
+                            Optimiza tus cultivos, reduce costos y maximiza tu rendimiento con nuestra plataforma de monitoreo en tiempo real.
+                        </p>
+                        <div class="mt-8 flex flex-wrap gap-4 justify-center">
+                            <a href="{% url 'registro' %}" class="flex min-w-[120px] max-w-[480px] items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold hover:bg-green-600 transition-colors truncate">Registrarse</a>
+                            <a href="{% url 'login' %}" class="flex min-w-[120px] max-w-[480px] items-center justify-center rounded-lg h-12 px-6 bg-transparent border border-white text-white text-base font-bold hover:bg-white/10 transition-colors truncate">Iniciar Sesión</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Benefits Section -->
+            <section class="py-16 md:py-24 bg-background-light dark:bg-background-dark" id="benefits">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight ">Beneficios Clave</h2>
+                        <p class="mt-4 max-w-2xl mx-auto text-lg text-text-dark/80 dark:text-text-light/80">Descubre cómo nuestra plataforma puede ayudarte a mejorar tus prácticas agrícolas.</p>
+                    </div>
+                    <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+                        {% comment %} Benefit Cards {% endcomment %}
+                        <div class="flex flex-col items-center text-center p-6 rounded-xl bg-white dark:bg-zinc-800 shadow-md">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined">sensors</span>
+                            </div>
+                            <h3 class="mt-5 text-lg font-semibold">Monitoreo 24/7</h3>
+                            <p class="mt-2 text-sm text-text-dark/80 dark:text-text-light/80">Accede a datos vitales de tus cultivos desde cualquier lugar y en cualquier momento.</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center p-6 rounded-xl bg-white dark:bg-zinc-800 shadow-md">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined">water_drop</span>
+                            </div>
+                            <h3 class="mt-5 text-lg font-semibold">Optimización de Recursos</h3>
+                            <p class="mt-2 text-sm text-text-dark/80 dark:text-text-light/80">Haz un uso eficiente del agua, fertilizantes y otros recursos para reducir costos.</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center p-6 rounded-xl bg-white dark:bg-zinc-800 shadow-md">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined">notifications_active</span>
+                            </div>
+                            <h3 class="mt-5 text-lg font-semibold">Alertas y Notificaciones</h3>
+                            <p class="mt-2 text-sm text-text-dark/80 dark:text-text-light/80">Recibe notificaciones instantáneas sobre eventos críticos en tus cultivos.</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center p-6 rounded-xl bg-white dark:bg-zinc-800 shadow-md">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined">trending_up</span>
+                            </div>
+                            <h3 class="mt-5 text-lg font-semibold">Reducción de Pérdidas</h3>
+                            <p class="mt-2 text-sm text-text-dark/80 dark:text-text-light/80">Previene y reduce pérdidas por enfermedades, plagas y condiciones adversas.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="py-16 md:py-24" id="how-it-works">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight">¿Cómo Funciona?</h2>
+                        <p class="mt-4 max-w-2xl mx-auto text-lg text-text-dark/80 dark:text-text-light/80">En solo tres simples pasos, transforma la gestión de tus cultivos.</p>
+                    </div>
+                    <div class="mt-12 grid grid-cols-[auto_1fr] gap-x-6 md:gap-x-8 max-w-3xl mx-auto">
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-white">
+                                <span class="material-symbols-outlined">router</span>
+                            </div>
+                            <div class="w-px bg-gray-300 dark:bg-gray-600 grow"></div>
+                        </div>
+                        <div class="pb-12">
+                            <h3 class="text-lg font-semibold">1. Instala los Sensores</h3>
+                            <p class="mt-1 text-text-dark/80 dark:text-text-light/80">Conecta fácilmente nuestros sensores en tus invernaderos o en campo abierto. La instalación es rápida y no requiere conocimientos técnicos.</p>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-white">
+                                <span class="material-symbols-outlined">analytics</span>
+                            </div>
+                            <div class="w-px bg-gray-300 dark:bg-gray-600 grow"></div>
+                        </div>
+                        <div class="pb-12">
+                            <h3 class="text-lg font-semibold">2. Recibe y Monitoriza los Datos</h3>
+                            <p class="mt-1 text-text-dark/80 dark:text-text-light/80">Visualiza en tiempo real los datos de humedad, temperatura y nutrientes en nuestra plataforma intuitiva y fácil de usar.</p>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-white">
+                                <span class="material-symbols-outlined">task_alt</span>
+                            </div>
+                        </div>
+                        <div class="pb-0">
+                            <h3 class="text-lg font-semibold">3. Toma Decisiones y Actúa</h3>
+                            <p class="mt-1 text-text-dark/80 dark:text-text-light/80">Utiliza la información para tomar decisiones informadas, optimizar el riego, la fertilización y maximizar tu rendimiento.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section class="py-16 md:py-24 bg-background-light dark:bg-background-dark" id="testimonials">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Lo que dicen nuestros clientes</h2>
+                        <p class="mt-4 max-w-2xl mx-auto text-lg text-text-dark/80 dark:text-text-light/80">Historias de éxito de agricultores que han transformado su producción.</p>
+                    </div>
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Testimonial Cards -->
+                        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
+                            <p class="text-text-dark/90 dark:text-text-light/90">"Desde que usamos AgroTech, hemos reducido el consumo de agua en un 30% y nuestras cosechas nunca han sido mejores. ¡Es una herramienta indispensable!"</p>
+                            <div class="mt-4 flex items-center">
+                                <img class="h-12 w-12 rounded-full object-cover" alt="Foto de Juan Pérez" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqknlzYoVjJ8xX02vU0Mdnd8EcNyRLRPNKuNpeL9ZyLX5pu8-InNRc3e7v7_qJs-MnDv41v_udWhjIyT_m0ercoLCN7kWWblHLNsb1y8rxtqjyZKQVlWeHgoUt3SbOtNZ-ooWpz5xrQsiKyUHgWPL6iwGwcbtheqlzR33p8Cxvfod07YTSzdcq9bLtxe6En4xHrLSMthV1T3QTJwz4ztVt7_CeYrXxQhoGOj0LXGBkc-WmEVNDdzsA2P01XALwfXNJ4cgie4CvuR8"/>
+                                <div class="ml-4">
+                                    <p class="font-semibold">Juan Pérez</p>
+                                    <p class="text-sm text-text-dark/70 dark:text-text-light/70">Finca La Esperanza</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
+                            <p class="text-text-dark/90 dark:text-text-light/90">"La capacidad de recibir alertas en mi móvil ha salvado mi cultivo de una helada inesperada. La inversión se pagó sola en una noche."</p>
+                            <div class="mt-4 flex items-center">
+                                <img class="h-12 w-12 rounded-full object-cover" alt="Foto de María García" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoaLU-VWw1j652iupm5Qg8WteBPl5liCR778h9ejhJAJX8A-Z3YUnhc05nslGCfJcrjO7wRMJ0mMZjlEYxC1oGBsA7c3Ut3RIhz57UTvcKDgjfXyUtd7fXQd-z9_BaWFDmE5fJ2oSLxpFfLs32dix-GRG0UvwukWGAYKeKTsmA0iKmuCfUXWVQswTXeNh-VRuY5tsfCSVLGmnNYvY9YZ5DDJNUP_cEpVStk60pixJIFis9l0kdgfd4QVZ9eLBYwYAcVx6E_fRLO3A"/>
+                                <div class="ml-4">
+                                    <p class="font-semibold">María García</p>
+                                    <p class="text-sm text-text-dark/70 dark:text-text-light/70">Agro-Inversiones del Sol</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
+                            <p class="text-text-dark/90 dark:text-text-light/90">"La plataforma es increíblemente fácil de usar. Ahora tengo control total sobre mis invernaderos desde la palma de mi mano. ¡Totalmente recomendado!"</p>
+                            <div class="mt-4 flex items-center">
+                                <img class="h-12 w-12 rounded-full object-cover" alt="Foto de Carlos Rodriguez" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_0d1VTJi_NeZeQhQCxTgWXc6oBqdfJEC3348qYdeJsLi46lrusiVh_pnZXU4LqnhwBd-aqKslF_MIcFdEffGf5Ecw9LPC-0skQT1Y0y74m920Sj1K3NOqrTeXskO5df3Dok1iw3DXQlWRmh3Cm2woL_nrdL1ekEYtKkRpSkEKoR1L-eP3dE9LesJukbVbOZVliG-a53Jy1cMTHnqtaX_XHF7uL-uGabPrXhZHXtCBqUEya8_4UeVt_uJ11pn0FIhy_dNr6rY_WWU"/>
+                                <div class="ml-4">
+                                    <p class="font-semibold">Carlos Rodriguez</p>
+                                    <p class="text-sm text-text-dark/70 dark:text-text-light/70">Cultivos Hidropónicos del Valle</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final CTA Section -->
+            <section class="py-16 md:py-24">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">¿Listo para transformar tu agricultura?</h2>
+                    <p class="mt-4 text-lg text-text-dark/80 dark:text-text-light/80">Únete a la revolución de la agricultura de precisión. Empieza hoy mismo.</p>
+                    <div class="mt-8 flex flex-wrap gap-4 justify-center">
+                        <a href="{% url 'registro' %}" class="flex min-w-[120px] max-w-[480px] items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold hover:bg-green-600 transition-colors truncate">Registrarse Gratis</a>
+                        <a href="{% url 'login' %}" class="flex min-w-[120px] max-w-[480px] items-center justify-center rounded-lg h-12 px-6 bg-transparent border border-text-dark/80 dark:border-text-light/80 text-text-dark dark:text-text-light text-base font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-colors truncate">Iniciar Sesión</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+        {% endblock content %}
+
+        <!-- Footer -->
+        <footer class="bg-background-light dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-700">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="col-span-2 md:col-span-1">
+                        <div class="flex items-center gap-2 text-primary">
+                            <div class="size-6">
+                                <svg fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold">AgroTech</h2>
+                        </div>
+                        <p class="mt-2 text-sm text-text-dark/70 dark:text-text-light/70">Agricultura de precisión para un futuro sostenible.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase">Soluciones</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Invernaderos</a></li>
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Campo Abierto</a></li>
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Sensores</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase">Compañía</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Sobre Nosotros</a></li>
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Contacto</a></li>
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Carreras</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase">Legal</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Términos de Servicio</a></li>
+                            <li><a class="text-sm text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">Política de Privacidad</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-gray-200 dark:border-zinc-700 pt-8 flex items-center justify-between">
+                    <p class="text-sm text-text-dark/70 dark:text-text-light/70">© 2024 AgroTech. Todos los derechos reservados.</p>
+                    <div class="flex space-x-6">
+                        <a class="text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">
+                            <span class="sr-only">Facebook</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg>
+                        </a>
+                        <a class="text-text-dark/70 dark:text-text-light/70 hover:text-primary transition-colors" href="#">
+                            <span class="sr-only">Twitter</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!---THEMES MODE-->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const themeToggleBtn = document.getElementById('themeIconContainer');
+			const themeIcon = document.getElementById('themeIcon');
+
+			// Función para cambiar el ícono del tema
+			function toggleThemeIcon() {
+				if (document.documentElement.classList.contains('dark')) {
+					themeIcon.classList.remove('fa-moon');
+					themeIcon.classList.add('fa-sun');
+				} else {
+					themeIcon.classList.remove('fa-sun');
+					themeIcon.classList.add('fa-moon');
+				}
+			}
+
+			// Función para aplicar un tema y actualizar el ícono
+			function setTheme(theme) {
+				document.documentElement.className = theme;
+				localStorage.setItem('theme', theme); // Guarda el tema seleccionado en localStorage para persistencia
+
+				// Mostrar u ocultar la imagen de fondo según el tema seleccionado (si es necesario)
+				const heroSection = document.getElementById('hero-section');
+				if (heroSection) {
+					if (theme === 'theme1') {
+						heroSection.classList.remove('no-background');
+					} else {
+						heroSection.classList.add('no-background');
+					}
+				}
+
+				// Cambia el ícono del tema
+				toggleThemeIcon();
+			}
+
+			// Verifica si hay un tema guardado en el almacenamiento local
+			const savedTheme = localStorage.getItem('theme') || 'light';
+			setTheme(savedTheme);
+
+			// Cambiar el ícono del tema al cargar la página
+			toggleThemeIcon();
+
+			// Agrega un listener para el evento 'click' en el botón
+			themeToggleBtn.addEventListener('click', function (event) {
+				event.preventDefault(); // Previene el comportamiento predeterminado del ícono
+				// Cambia entre temas light y dark
+				if (document.documentElement.classList.contains('dark')) {
+					setTheme('light');
+				} else {
+					setTheme('dark');
+				}
+			});
+
+			// Exponer setTheme globalmente para usarlo en el menú de temas
+			window.setTheme = setTheme;
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+{% extends "base/base.html" %}
+{% block title %}Dashboard | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'umbral_list' %}">umbrales</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'alerta_list' %}">alerta</a>{% endblock  %}
+{% block a6info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_profile' %}">perfil</a>{% endblock %}
+{% if user.is_admin %}
+    {% block a7info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_list' %}">Usuarios</a>{% endblock %}
+{% endif %}
+
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+{% block content %}
+{% load static %}
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <main class="flex-1 px-6 md:px-10 py-8">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                        <p class="text-3xl md:text-4xl font-black tracking-tighter">Dashboard de Monitoreo Ambiental</p>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-gray-500">calendar_today</span>
+                            <span class="text-sm font-medium">Última actualización: Justo ahora</span>
+                        </div>
+                    </div>
+                    <!-- Cards de Resumen -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <!-- Card Sensores Activos -->
+                        <div class="rounded-xl overflow-hidden bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="material-symbols-outlined text-primary text-3xl">sensors</span>
+                                    <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Últimas 24h</span>
+                                </div>
+                                <h3 class="text-base font-medium text-text-dark dark:text-text-light">Sensores Activos</h3>
+                                <p class="text-3xl font-bold text-primary mt-2">{{ sensores_activos }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Card Total Alertas -->
+                        <div class="rounded-xl overflow-hidden bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="material-symbols-outlined text-blue-500 text-3xl">notifications</span>
+                                    <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total</span>
+                                </div>
+                                <h3 class="text-base font-medium text-text-dark dark:text-text-light">Alertas Totales</h3>
+                                <p class="text-3xl font-bold text-blue-500 mt-2">{{ resumen_alertas.total }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Card Alertas Nuevas -->
+                        <div class="rounded-xl overflow-hidden bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="material-symbols-outlined text-yellow-500 text-3xl">warning</span>
+                                    <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Sin atender</span>
+                                </div>
+                                <h3 class="text-base font-medium text-text-dark dark:text-text-light">Alertas Nuevas</h3>
+                                <p class="text-3xl font-bold text-yellow-500 mt-2">{{ resumen_alertas.nuevas }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Card Alertas Críticas -->
+                        <div class="rounded-xl overflow-hidden bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="material-symbols-outlined text-red-500 text-3xl">error</span>
+                                    <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Críticas</span>
+                                </div>
+                                <h3 class="text-base font-medium text-text-dark dark:text-text-light">Alertas Críticas</h3>
+                                <p class="text-3xl font-bold text-red-500 mt-2">{{ resumen_alertas.criticas }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tarjetas de monitoreo -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="flex flex-col gap-2 rounded-xl p-6 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <p class="text-base font-medium text-orange">Temperatura</p>
+                                <span class="material-symbols-outlined text-orange">thermostat</span>
+                            </div>
+                            <p id="temp-value" class="text-3xl font-bold">25°C</p>
+                            <div class="flex items-center gap-1 text-green-500">
+                                <span class="material-symbols-outlined text-sm">arrow_upward</span>
+                                <p class="text-sm font-medium">+1.2%</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 rounded-xl p-6 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <p class="text-base font-medium text-blue">Humedad Relativa</p>
+                                <span class="material-symbols-outlined text-blue">water_drop</span>
+                            </div>
+                            <p id="hum-value" class="text-3xl font-bold">60%</p>
+                            <div class="flex items-center gap-1 text-red">
+                                <span class="material-symbols-outlined text-sm">arrow_downward</span>
+                                <p class="text-sm font-medium">-0.5%</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 rounded-xl p-6 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <p class="text-base font-medium text-gray-500">Niveles de CO₂</p>
+                                <span class="material-symbols-outlined text-gray-500">co2</span>
+                            </div>
+                            <p id="co2-value" class="text-3xl font-bold">800 ppm</p>
+                            <div class="flex items-center gap-1 text-green-500">
+                                <span class="material-symbols-outlined text-sm">arrow_upward</span>
+                                <p class="text-sm font-medium">+2.1%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Gráficos y Resumen de Alertas -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Gráfico de Temperatura y Humedad -->
+                        <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                            <h3 class="text-lg font-semibold text-text-dark dark:text-text-light mb-4">Tendencia de Temperatura y Humedad</h3>
+                            <div class="h-80">
+                                <canvas id="tempHumChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico de CO2 -->
+                        <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                            <h3 class="text-lg font-semibold text-text-dark dark:text-text-light mb-4">Niveles de CO2</h3>
+                            <div class="h-80">
+                                <canvas id="co2Chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Resumen de Alertas -->
+                        <div class="space-y-6">
+                            <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                                <h2 class="text-lg font-bold mb-4 text-text-dark dark:text-text-light">Resumen de Alertas</h2>
+                                <div class="space-y-4">
+                                    {% for alerta in ultimas_alertas %}
+                                    <div class="flex items-start gap-3">
+                                        <span class="material-symbols-outlined {% if alerta.nivel_severidad == 'CRITICA' %}text-red{% elif alerta.nivel_severidad == 'ALTA' %}text-orange{% else %}text-yellow-500{% endif %} mt-1">
+                                            {% if alerta.nivel_severidad == 'CRITICA' %}error{% else %}warning{% endif %}
+                                        </span>
+                                        <div>
+                                            <p class="font-medium text-sm text-text-dark dark:text-text-light">
+                                                {{ alerta.parametro }}: {{ alerta.lectura_valor }}
+                                                {% if alerta.parametro == 'TEMPERATURA' %}°C
+                                                {% elif alerta.parametro == 'HUMEDAD' %}%
+                                                {% elif alerta.parametro == 'CO2' %}ppm{% endif %}
+                                                en {{ alerta.zona.nombre }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Hace {{ alerta.fecha_creacion|timesince }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">No hay alertas recientes</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        function actualizarDatos() {
+            // Añadimos un parámetro único a la URL para evitar que el navegador use la caché
+            let url = "/obtener_datos/?_=" + new Date().getTime();
+
+            $.getJSON(url, function(data) {
+                console.log("Datos recibidos por el navegador:", data);
+                
+                // Usamos las claves correctas que vienen del JSON
+                $("#temp-value").text(data.temperature.toFixed(1) + " °C");
+                $("#hum-value").text(data.humidity.toFixed(1) + " %");
+                $("#co2-value").text(data.co2_ppm.toFixed(4) + " ppm");
+            });
+        }
+
+        $(document).ready(function() {
+            actualizarDatos();
+            setInterval(actualizarDatos, 3000); 
+        });
+    </script>
+    <!-- Scripts para las gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Configuración de gráficas con datos reales
+        const datosHistoricos = {{ datos_historicos|safe }};
+        
+        // Función para formatear fechas
+        function formatearHora(fecha) {
+            return new Date(fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Gráfico de Temperatura y Humedad
+        const ctxTempHum = document.getElementById('tempHumChart').getContext('2d');
+        let chartTempHum = new Chart(ctxTempHum, {
+            type: 'line',
+            data: {
+                labels: datosHistoricos.map(d => formatearHora(d.timestamp)),
+                datasets: [{
+                    label: 'Temperatura (°C)',
+                    data: datosHistoricos.map(d => d.temp_promedio),
+                    borderColor: '#ef4444',
+                    tension: 0.4,
+                    fill: false
+                }, {
+                    label: 'Humedad (%)',
+                    data: datosHistoricos.map(d => d.hum_promedio),
+                    borderColor: '#3b82f6',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(156, 163, 175, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de CO2
+        const ctxCO2 = document.getElementById('co2Chart').getContext('2d');
+        let chartCO2 = new Chart(ctxCO2, {
+            type: 'line',
+            data: {
+                labels: datosHistoricos.map(d => formatearHora(d.timestamp)),
+                datasets: [{
+                    label: 'CO2 (ppm)',
+                    data: datosHistoricos.map(d => d.co2_promedio),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(156, 163, 175, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Actualizar gráficas con nuevos datos
+        function actualizarGraficas() {
+            fetch('/obtener_datos_historicos/')
+                .then(response => response.json())
+                .then(datos => {
+                    // Actualizar datos de las gráficas
+                    chartTempHum.data.labels = datos.map(d => formatearHora(d.timestamp));
+                    chartTempHum.data.datasets[0].data = datos.map(d => d.temp_promedio);
+                    chartTempHum.data.datasets[1].data = datos.map(d => d.hum_promedio);
+                    chartTempHum.update();
+
+                    chartCO2.data.labels = datos.map(d => formatearHora(d.timestamp));
+                    chartCO2.data.datasets[0].data = datos.map(d => d.co2_promedio);
+                    chartCO2.update();
+                });
+        }
+
+        // Actualizar gráficas cada 5 minutos
+        setInterval(actualizarGraficas, 300000);
+    </script>
+    
+{% endblock content %}

@@ -1,0 +1,111 @@
+{% extends "base/base.html" %}
+{% block title %}Mi Perfil | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'umbral_list' %}">umbrales</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'alerta_list' %}">alerta</a>{% endblock  %}
+{% block a6info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_profile' %}">perfil</a>{% endblock %}
+{% block a7info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_list' %}">Usuarios</a>{% endblock %}
+
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+
+{% block content %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 px-6 md:px-10 py-8">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl font-black mb-8">Mi Perfil</h1>
+
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-1">
+                        <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm text-center">
+                            <div class="w-24 h-24 mx-auto bg-primary rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
+                                {{ user.first_name.0|default:user.email.0|upper }}
+                            </div>
+                            <h2 class="text-xl font-bold mb-1">{{ user.get_full_name }}</h2>
+                            <p class="text-sm text-gray-500 mb-4">{{ user.email }}</p>
+                            <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+                                {% if user.role == 'ADMIN' %}bg-purple-100 text-purple-800
+                                {% elif user.role == 'AGRONOMO' %}bg-blue-100 text-blue-800
+                                {% elif user.role == 'TECNICO' %}bg-green-100 text-green-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ user.get_role_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <div class="bg-card-light dark:bg-card-dark p-8 rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+                            <h2 class="text-xl font-bold mb-6">Información Personal</h2>
+
+                            <form method="post" class="space-y-6">
+                                {% csrf_token %}
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Nombres</label>
+                                        {{ form.first_name }}
+                                        {% if form.first_name.errors %}
+                                        <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Apellidos</label>
+                                        {{ form.last_name }}
+                                        {% if form.last_name.errors %}
+                                        <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Correo Electrónico</label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Teléfono</label>
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ form.phone.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Rol</label>
+                                    {{ form.role }}
+                                    <p class="mt-1 text-xs text-gray-500">No puedes cambiar tu propio rol</p>
+                                </div>
+
+                                <div class="pt-4">
+                                    <button type="submit" class="w-full h-12 px-6 bg-primary text-white rounded-lg font-bold hover:bg-green-600 transition-colors">
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}
+

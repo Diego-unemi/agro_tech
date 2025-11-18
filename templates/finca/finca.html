@@ -1,0 +1,159 @@
+{% extends "base/base.html" %}
+{% block title %}Gestion de Fincas | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#faq">Preguntas Frecuentes</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#contact">Contacto</a>{% endblock  %}
+º
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+{% block content %}
+{% load static %}
+
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<main class="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-10">
+<div class="layout-content-container flex flex-col max-w-7xl flex-1 gap-8">
+<div class="flex flex-wrap justify-between items-center gap-4">
+<div class="flex flex-col gap-2">
+<p class="text-3xl lg:text-4xl font-black tracking-tighter">Gestión de Fincas e Invernaderos</p>
+<p class="text-base font-normal text-gray-500 dark:text-gray-400">Aquí puedes añadir, editar o eliminar fincas y sus parcelas asociadas.</p>
+</div>
+<button class="flex items-center gap-2 min-w-[84px] cursor-pointer justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold shadow-lg hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="truncate">Agregar Nueva Finca</span>
+</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 flex flex-col gap-6">
+<div class="px-4 py-3 bg-white dark:bg-gray-800 rounded-xl shadow">
+<label class="flex flex-col w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-12">
+<div class="text-gray-400 flex items-center justify-center pl-4">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-gray-400 px-2 text-base font-normal" placeholder="Buscar por nombre de finca..." value=""/>
+</div>
+</label>
+</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-gray-50 dark:bg-gray-700">
+<th class="px-6 py-4 text-sm font-bold uppercase tracking-wider">Nombre</th>
+<th class="px-6 py-4 text-sm font-bold uppercase tracking-wider">Ubicación</th>
+<th class="px-6 py-4 text-sm font-bold uppercase tracking-wider">Tamaño (ha)</th>
+<th class="px-6 py-4 text-sm font-bold uppercase tracking-wider text-center">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Green Valley</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">California, USA</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">150</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
+<button class="text-secondary hover:text-secondary/80 p-2 rounded-full"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-error hover:text-error/80 p-2 rounded-full"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Sunset Acres</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Florida, USA</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">75</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
+<button class="text-secondary hover:text-secondary/80 p-2 rounded-full"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-error hover:text-error/80 p-2 rounded-full"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Mountain View</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Colorado, USA</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">300</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
+<button class="text-secondary hover:text-secondary/80 p-2 rounded-full"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-error hover:text-error/80 p-2 rounded-full"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Riverbend Farms</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Oregon, USA</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">120</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
+<button class="text-secondary hover:text-secondary/80 p-2 rounded-full"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-error hover:text-error/80 p-2 rounded-full"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex items-center justify-center p-4 border-t border-gray-200 dark:border-gray-700">
+<a class="flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" href="#">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-400">chevron_left</span>
+</a>
+<a class="text-sm font-bold leading-normal flex size-10 items-center justify-center text-white rounded-full bg-primary" href="#">1</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" href="#">2</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" href="#">3</a>
+<span class="text-sm font-normal leading-normal flex size-10 items-center justify-center">...</span>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" href="#">8</a>
+<a class="flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" href="#">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-400">chevron_right</span>
+</a>
+</div>
+</div>
+</div>
+<div class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 h-fit">
+<h3 class="text-xl font-bold mb-6">Agregar/Editar Finca</h3>
+<form class="space-y-6">
+<div>
+<label class="block text-sm font-medium mb-1" for="farm-name">Nombre de la finca</label>
+<input class="form-input w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-primary focus:border-primary transition" id="farm-name" placeholder="Ej. Finca El Sol" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1" for="location">Ubicación</label>
+<div class="relative">
+<input class="form-input w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-primary focus:border-primary transition pr-10" id="location" placeholder="Dirección o coordenadas" type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">public</span>
+</div>
+<div class="mt-2 h-40 rounded-lg bg-gray-200 dark:bg-gray-700" data-alt="Mapa interactivo de ubicación" data-location="placeholder" style="https://placeholder.pics/svg/300">
+<img alt="Map placeholder" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu4k608OvAPPqYQgzo-3pOHROQAoLYAW3swqfHEC-_YvRURNBaZsD6LymY4_cLUHui9Xf_XVyT-_PAvVckqd3L_GfImyAaDFowGAXBbzjJXJJEW-N4Ne0WIqUVUOOoWkVurZI3HhwCB8rJxRFpJRAqWR-8yh3sS9L42Ias8Cl7mS2qpw2zfpLneLHsIKrehjXUv4DM2NI_MrDxFdRYDowDkcXC-pI6WgVXX5isAI9c84MF0g0drCIeua6m-6n7kxch0GtORWSiPw0"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1" for="size">Tamaño del terreno (ha)</label>
+<input class="form-input w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-primary focus:border-primary transition" id="size" placeholder="Ej. 150" type="number"/>
+</div>
+<div>
+<h4 class="text-sm font-medium mb-2">Invernaderos / Parcelas</h4>
+<div class="space-y-3 max-h-48 overflow-y-auto pr-2">
+<div class="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+<input class="form-input w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm" placeholder="Nombre" type="text" value="Invernadero A"/>
+<select class="form-select rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm">
+<option>Tomate</option>
+<option>Lechuga</option>
+</select>
+<button class="text-error/80 hover:text-error p-1" type="button"><span class="material-symbols-outlined text-base">remove_circle_outline</span></button>
+</div>
+</div>
+<button class="mt-2 text-sm text-primary font-semibold flex items-center gap-1 hover:underline" type="button">
+<span class="material-symbols-outlined text-lg">add</span>
+                                        Añadir parcela
+                                    </button>
+</div>
+<div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+<button class="px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" type="button">Cancelar</button>
+<button class="px-6 py-2 rounded-lg bg-primary text-white text-sm font-bold shadow hover:bg-primary/90 transition-colors" type="submit">Guardar</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>
+{% endblock content %}

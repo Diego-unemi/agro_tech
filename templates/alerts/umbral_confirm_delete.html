@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+{% block title %}Eliminar Umbral | AgroTech {% endblock title %}
+
+{% block content %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 px-6 md:px-10 py-8">
+            <div class="max-w-2xl mx-auto">
+                <div class="mb-6">
+                    <a href="{% url 'umbral_list' %}" class="text-primary hover:text-green-600 flex items-center gap-2 text-sm font-medium">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Volver a Umbrales
+                    </a>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-8 rounded-xl border border-red shadow-lg">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="material-symbols-outlined text-red text-5xl">warning</span>
+                        <div>
+                            <h1 class="text-2xl font-bold text-red">Confirmar Eliminación de Umbral</h1>
+                            <p class="text-gray-600 mt-1">Esta acción eliminará el umbral permanentemente</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg mb-6">
+                        <p class="text-lg mb-4">¿Estás seguro de que deseas eliminar el siguiente umbral?</p>
+                        <div class="space-y-2">
+                            <p><span class="font-semibold">Zona:</span> {{ umbral.zona.nombre }} ({{ umbral.zona.finca.nombre }})</p>
+                            <p><span class="font-semibold">Parámetro:</span> {{ umbral.get_parametro_display }}</p>
+                            <p><span class="font-semibold">Rango:</span> {{ umbral.valor_minimo }} - {{ umbral.valor_maximo }}</p>
+                            <p><span class="font-semibold">Severidad:</span> {{ umbral.get_nivel_severidad_display }}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <div class="flex">
+                            <span class="material-symbols-outlined text-yellow-400 mr-3">info</span>
+                            <p class="text-sm text-yellow-700">
+                                Al eliminar este umbral, ya no se generarán alertas automáticas para este parámetro en esta zona.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form method="post" class="flex gap-4">
+                        {% csrf_token %}
+                        <button type="submit" class="flex-1 h-12 px-6 bg-red text-white rounded-lg font-bold hover:bg-red-700 transition-colors">
+                            Sí, Eliminar Umbral
+                        </button>
+                        <a href="{% url 'umbral_list' %}" class="flex-1 h-12 px-6 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors flex items-center justify-center">
+                            Cancelar
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}
+

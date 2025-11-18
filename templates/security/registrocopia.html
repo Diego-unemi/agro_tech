@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'dist/styles.css' %}" rel="stylesheet">
+    <title>Registro | AgroTech</title>
+</head>
+<body class="h-screen flex flex-col justify-center">
+    <div class="max-w-[560PX] mx-auto h-fit p-20 bg-slate-950 text-white rounded-xl">
+        <h1 class="text-5xl font-bold">Registro de Usuario</h1>
+        <form action="" method="POST" class="flex flex-col">
+            {% csrf_token %}
+            <div class="mt-6 flex justify-between">
+                {{form.first_name}}
+                {% if form.first_name.errors %}
+                    <div class="text-red-500 text-sm my-2">
+                        {% for error in form.first_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {{form.last_name}}
+                {% if form.last_name.errors %}
+                    <div class="text-red-500 text-sm my-2">
+                        {% for error in form.last_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+                {{form.email}}
+                {% if form.email.errors %}
+                    <div class="text-red-500 text-sm my-2">
+                        {% for error in form.email.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {{form.phone}}
+                {% if form.phone.errors %}
+                    <div class="text-red-500 text-sm my-2">
+                        {% for error in form.phone.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {{form.password1}}
+                {% if form.password1.errors %}
+                    <div class="text-red-500 text-sm my-2">
+                        {% for error in form.password1.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {{form.password2}}
+                {% if form.password2.errors %}
+                    <div class="text-red-500 text-sm my-2">
+                        {% for error in form.password2.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            <button type="submit" class="mt-4 bg-blue-400 text-xl font-semibold w-[400px] px-4 py-4 rounded-lg">Registrarse</button>
+        </form>
+        {% if form.non_field_errors %}
+            <div class="text-red-500 text-sm my-2">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <p class="mt-4 text-center text-gray-600">
+            ¿Ya tienes una cuenta?
+            <a href="/login" class="text-green-600 hover:underline">Inicia sesión</a>
+        </p>
+    </div>
+</body>
+</html>

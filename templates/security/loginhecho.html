@@ -1,0 +1,111 @@
+{% extends "base/base.html" %}
+{% block title %}Iniciar Sesión{% endblock title %}
+{% block extra_head %}
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4CAF50",
+                        "background-light": "#F4F4F4",
+                        "background-dark": "#1a1a1a",
+                        "text-light": "#333333",
+                        "text-dark": "#333333",
+                        "accent": "#2196F3",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+{% endblock extra_head %}
+{% block content %}
+{% load static %}
+    <div class="relative flex min-h-screen w-full flex-col group/design-root">
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="flex flex-1 justify-center items-center">
+                <div class="layout-content-container flex flex-col md:flex-row max-w-6xl w-full mx-4 bg-white dark:bg-zinc-900 rounded-xl shadow-lg overflow-hidden">
+                    <div class="hidden md:flex w-full md:w-1/2 bg-center bg-no-repeat bg-cover" data-alt="A modern greenhouse with automated sensors monitoring plant growth." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBuYTTgJNx3H_vtXo_mT9_ZTO7SkTYJBUOk5F1-HVrrFK_HCVqLf6DOFHPbnOCIh1NR5NE2Kvmy8RxaC1Qt2d_6ciq8JO_kC5QHgyWFZbQKUuPYf4LtacECz2fVH1hS00Q5egEwQ0-ToS_Mj9jYjO2ZVE7Cbc-HoEaPkkyuN6qT2BVoeO8mwyK3QbS78Vtd3IqYEygfxVL0SPkXyFxA1Xcmap7g-Xe2Vy8ZxyJE34uNrJtRd35mlXPds6wP8KAZzt61JxQuUKBr3Jc");'>
+                    </div>
+                    <div class="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
+                        <div class="flex flex-col items-center mb-6">
+                            <span class="material-symbols-outlined text-primary text-5xl mb-2">spa</span>
+                            <h1 class="text-3xl font-bold tracking-tight text-text-light dark:text-text-dark text-center">AgroTech</h1>
+                            <p class="text-base font-normal text-text-light/80 dark:text-text-dark/80 text-center mt-1">Agricultura inteligente, resultados visibles.</p>
+                        </div>
+                        <div class="w-full max-w-sm mx-auto">
+                            <form action="" method="POST" class="flex flex-col gap-4 py-3">
+                            {% csrf_token %}
+                                <label class="flex flex-col">
+                                    <p class="text-base font-medium pb-2 text-text-light dark:text-text-dark">Correo Electrónico / Usuario</p>
+                                    <div class="flex w-full flex-1 items-stretch rounded-lg">
+                                        <span class="flex items-center justify-center pl-4 pr-3 border border-r-0 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-l-lg text-zinc-500 dark:text-zinc-400">
+                                            <span class="material-symbols-outlined">mail</span>
+                                        </span>
+                                        {{form.username}}
+                                        {% if form.username.errors %}
+                                        <div class="text-red-500 text-sm mb-2">
+                                            {{ form.username.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </label>
+                                <label class="flex flex-col">
+                                    <p class="text-base font-medium pb-2 text-text-light dark:text-text-dark">Contraseña</p>
+                                    <div class="flex w-full flex-1 items-stretch rounded-lg">
+                                        <span class="flex items-center justify-center pl-4 pr-3 border border-r-0 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-l-lg text-zinc-500 dark:text-zinc-400">
+                                            <span class="material-symbols-outlined">lock</span>
+                                        </span>
+                                        {{form.password}}
+                                        {% if form.password.errors %}
+                                        <div class="text-red-500 text-sm mb-2">
+                                            {{ form.password.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <button aria-label="Mostrar contraseña" type="button" class="flex items-center justify-center px-4 border border-l-0 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-r-lg text-zinc-500 dark:text-zinc-400">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                    </div>
+                                </label>
+                                <div class="flex items-center justify-between mt-4">
+                                    <div class="flex items-center">
+                                        <input class="h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary" id="remember-me" name="remember-me" type="checkbox"/>
+                                        <label class="ml-2 block text-sm text-text-light dark:text-text-dark" for="remember-me">Recordarme</label>
+                                    </div>
+                                    <div class="text-sm">
+                                        <a class="font-medium text-accent hover:text-accent/80" href="#">¿Olvidaste tu contraseña?</a>
+                                    </div>
+                                </div>
+                                <button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg mt-8 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50 dark:focus:ring-offset-background-dark transition-colors duration-300 h-14 text-base" type="submit">
+                                    Iniciar Sesión
+                                </button>
+                                {% if form.non_field_errors %}
+                                    {% for error in form.non_field_errors %}
+                                    <div class="text-red-500 text-sm mb-2">
+                                        {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </form>
+                            <div class="text-center mt-6">
+                                <p class="text-sm text-text-light dark:text-text-dark">
+                                    ¿No tienes cuenta?
+                                    <a class="font-medium text-accent hover:text-accent/80" href="{% url 'registro' %}">Regístrate</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

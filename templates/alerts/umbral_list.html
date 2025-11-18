@@ -1,0 +1,166 @@
+{% extends "base/base.html" %}
+{% block title %}Umbrales de Alerta | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'umbral_list' %}">umbrales</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'alerta_list' %}">alerta</a>{% endblock  %}
+{% block a6info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_profile' %}">perfil</a>{% endblock %}
+{% if user.is_admin or user.is_agronomo %}
+    {% block a7info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_list' %}">Usuarios</a>{% endblock %}
+{% endif %}
+
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+{% block content %}
+{% load static %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 px-6 md:px-10 py-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                    <h1 class="text-3xl md:text-4xl font-black tracking-tighter">Umbrales de Alerta</h1>
+                    {% if user.is_admin or user.is_agronomo %}
+                    <a href="{% url 'umbral_create' %}" class="flex items-center gap-2 rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        Nuevo Umbral
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Filtros -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm mb-6">
+                    <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Zona</label>
+                            <select name="zona" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                    border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 h-14 placeholder:text-zinc-400 dark:placeholder-zinc-500 p-3.5 text-base font-normal">
+                                <option value="">Todas las zonas</option>
+                                {% for zona in zonas %}
+                                <option value="{{ zona.id }}" {% if zona_filter == zona.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ zona.nombre }} - {{ zona.finca.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Parámetro</label>
+                            <select name="parametro" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                    border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 h-14 placeholder:text-zinc-400 dark:placeholder-zinc-500 p-3.5 text-base font-normal">
+                                <option value="">Todos</option>
+                                {% for value, label in parametro_choices %}
+                                <option value="{{ value }}" {% if parametro_filter == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full min-w-0 flex-1 resize-none overflow-hidden text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                     border-zinc-300 dark:border-zinc-700  bg-primary text-white rounded-lg  hover:bg-green-600 transition-colors p-3.5 text-base font-normal  ">
+                                Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tabla de umbrales -->
+                <div class="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-800 border-b border-border-light dark:border-border-dark">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Zona</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parámetro</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rango</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Severidad</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                {% for umbral in page_obj %}
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm font-medium">{{ umbral.zona.nombre }}</div>
+                                        <div class="text-xs text-gray-500">{{ umbral.zona.finca.nombre }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                            {% if umbral.parametro == 'TEMPERATURA' %}bg-orange-100 text-orange-800
+                                            {% elif umbral.parametro == 'HUMEDAD' %}bg-blue-100 text-blue-800
+                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                            {{ umbral.get_parametro_display }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        {{ umbral.valor_minimo }} - {{ umbral.valor_maximo }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                            {% if umbral.nivel_severidad == 'CRITICO' %}bg-red-100 text-red-800
+                                            {% elif umbral.nivel_severidad == 'ALTO' %}bg-orange-100 text-orange-800
+                                            {% elif umbral.nivel_severidad == 'MEDIO' %}bg-yellow-100 text-yellow-800
+                                            {% else %}bg-green-100 text-green-800{% endif %}">
+                                            {{ umbral.get_nivel_severidad_display }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {% if umbral.activo %}
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        {% else %}
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-right text-sm font-medium">
+                                        {% if user.is_admin or user.is_agronomo %}
+                                        <a href="{% url 'umbral_edit' umbral.id %}" class="text-primary hover:text-green-600 mr-3">Editar</a>
+                                        <a href="{% url 'umbral_delete' umbral.id %}" class="text-red hover:text-red-700">Eliminar</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                        No se encontraron umbrales configurados.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    {% if page_obj.has_other_pages %}
+                    <div class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-t border-border-light dark:border-border-dark">
+                        <div class="flex items-center justify-center gap-2">
+                            {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}{% if zona_filter %}&zona={{ zona_filter }}{% endif %}{% if parametro_filter %}&parametro={{ parametro_filter }}{% endif %}" 
+                               class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">Anterior</a>
+                            {% endif %}
+                            
+                            <span class="px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                            
+                            {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}{% if zona_filter %}&zona={{ zona_filter }}{% endif %}{% if parametro_filter %}&parametro={{ parametro_filter }}{% endif %}" 
+                               class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">Siguiente</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}
+

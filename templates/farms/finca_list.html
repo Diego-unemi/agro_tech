@@ -1,0 +1,153 @@
+{% extends "base/base.html" %}
+{% block title %}Mis Fincas | AgroTech {% endblock title %}
+{% block a1info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'dashboard' %}">Dashboard</a>{% endblock %}
+{% block a2info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'sensor' %}">Sensores</a>{% endblock %}
+{% block a3info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'finca' %}">Fincas</a>{% endblock  %}
+{% block a4info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'umbral_list' %}">umbrales</a>{% endblock  %}
+{% block a5info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'alerta_list' %}">alerta</a>{% endblock  %}
+{% block a6info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_profile' %}">perfil</a>{% endblock %}
+{% if user.is_admin %}
+    {% block a7info %}<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="{% url 'user_list' %}">Usuarios</a>{% endblock %}
+{% endif %}
+
+{% block buttons %}
+<a href="{% url 'logout' %}" class="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors truncate">Cerrar Sesión</a>
+{% endblock %}
+
+{% block content %}
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 px-6 md:px-10 py-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                    <h1 class="text-3xl md:text-4xl font-black tracking-tighter">Mis Fincas</h1>
+                    {% if user.is_admin or user.is_agronomo or user.is_tecnico %}
+                    <a href="{% url 'finca_create' %}" class="flex items-center gap-2 rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold hover:bg-green-600 transition-colors">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        Nueva Finca
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Filtros y búsqueda -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl border border-border-light dark:border-border-dark shadow-sm mb-6">
+                    <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-2">Buscar</label>
+                            <input type="text" name="search" value="{{ search_query }}" 
+                                   placeholder="Nombre, ubicación o cultivo..." 
+                                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                    border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 h-14 placeholder:text-zinc-400 dark:placeholder-zinc-500 p-3.5 text-base font-normal">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Estado</label>
+                            <select name="estado" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border
+                                    border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 h-14 placeholder:text-zinc-400 dark:placeholder-zinc-500 p-3.5 text-base font-normal">
+                                <option value="">Todos</option>
+                                {% for value, label in estado_choices %}
+                                <option value="{{ value }}" {% if estado_filter == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="md:col-span-3 flex justify-end">
+                            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
+                                Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Grid de fincas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for finca in page_obj %}
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-xl font-bold">{{ finca.nombre }}</h3>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                    {% if finca.estado == 'ACTIVA' %}bg-green-100 text-green-800
+                                    {% elif finca.estado == 'INACTIVA' %}bg-red-100 text-red-800
+                                    {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                    {{ finca.get_estado_display }}
+                                </span>
+                            </div>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                    <span class="material-symbols-outlined text-sm">location_on</span>
+                                    <span>{{ finca.ubicacion }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                    <span class="material-symbols-outlined text-sm">landscape</span>
+                                    <span>{{ finca.area_total }} ha</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                    <span class="material-symbols-outlined text-sm">agriculture</span>
+                                    <span>{{ finca.cultivo_actual }}</span>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                <p class="text-xs text-gray-500 mb-3">
+                                    Propietario: {{ finca.propietario.get_full_name }}
+                                </p>
+                                <div class="flex gap-2">
+                                    <a href="{% url 'finca_detail' finca.id %}" 
+                                       class="flex-1 text-center px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">
+                                        Ver Detalle
+                                    </a>
+                                    {% if user.is_admin or user == finca.propietario %}
+                                    <a href="{% url 'finca_edit' finca.id %}" 
+                                       class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                                        <span class="material-symbols-outlined text-sm">edit</span>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center py-12">
+                        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">agriculture</span>
+                        <p class="text-xl text-gray-500">No se encontraron fincas</p>
+                        {% if user.is_admin or user.is_agronomo or user.is_tecnico %}
+                        <a href="{% url 'finca_create' %}" class="inline-block mt-4 px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-green-600 transition-colors">
+                            Crear Primera Finca
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginación -->
+                {% if page_obj.has_other_pages %}
+                <div class="mt-8 flex items-center justify-center gap-2">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}" 
+                       class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Anterior</a>
+                    {% endif %}
+                    
+                    <span class="px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                    
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if estado_filter %}&estado={{ estado_filter }}{% endif %}" 
+                       class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Siguiente</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}
+
