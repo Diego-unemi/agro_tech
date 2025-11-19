@@ -16,8 +16,8 @@ LATEST_DATA_FILE = 'latest_sensor_data.json'
 
 logger = logging.getLogger(__name__)
 
-@login_required(login_url='/login/')
 def obtener_unidad(parametro):
+    """Función auxiliar para obtener la unidad de medida de un parámetro"""
     return {
         'TEMPERATURA': '°C',
         'HUMEDAD': '%',
@@ -44,6 +44,25 @@ def recibir_datos(request):
                 sensor = Sensor.objects.get(codigo_serial=codigo_serial)
             except Sensor.DoesNotExist:
                 return JsonResponse({'error': 'Sensor no encontrado'}, status=404)
+
+            # Guardar datos en la base de datos
+            sensor_data = SensorData.objects.create(
+                temperature=lecturas['TEMPERATURA'],
+                humidity=lecturas['HUMEDAD'],
+                co2_ppm=lecturas['CO2']
+            )
+            logger.info(f"Datos guardados en BD: {sensor_data}")
+
+            # Actualizar archivo JSON con los últimos datos
+            try:
+                with open(LATEST_DATA_FILE, 'w') as f:
+                    json.dump({
+                        'temperature': lecturas['TEMPERATURA'],
+                        'humidity': lecturas['HUMEDAD'],
+                        'co2_ppm': lecturas['CO2']
+                    }, f)
+            except Exception as e:
+                logger.error(f"Error al actualizar archivo JSON: {e}")
 
             # Verificar umbrales y crear alertas
             alertas_creadas = []

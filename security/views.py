@@ -14,7 +14,7 @@ def registro(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('success')
+            return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
     return render(request, 'security/registro.html', {'form': form})
