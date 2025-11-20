@@ -16,9 +16,10 @@ REDIS_URL=redis://localhost:6379/0
 ### 1. Crear migraciones de base de datos
 ```bash
 python manage.py makemigrations
+```
+```bash
 python manage.py migrate
 ```
-
 ### 2. Crear superusuario
 ```bash
 python manage.py createsuperuser
