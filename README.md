@@ -1,4 +1,4 @@
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Diego-unemi/agro_tech)
+[![Documentacion](https://deepwiki.com/badge.svg)](https://deepwiki.com/Diego-unemi/agro_tech)
 # Resumen de Implementación - Sistema AgroTech
 
 1. **Instalar dependencias:**
